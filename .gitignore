@@ -118,3 +118,6 @@ node_modules
 
 # bower
 www/bower_components
+
+# db
+db/database.yml

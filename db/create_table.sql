@@ -1,0 +1,11 @@
+CREATE DATABASE IF NOT EXISTS slack_summary;
+
+USE slack_summary;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT NOT NULL AUTO_INCREMENT,
+  slack_id VARCHAR(32),
+  name VARCHAR(32),
+  created_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);
