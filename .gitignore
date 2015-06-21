@@ -121,3 +121,6 @@ www/bower_components
 
 # db
 db/database.yml
+
+# config
+config/config.yml
