@@ -2,6 +2,9 @@ CREATE DATABASE IF NOT EXISTS slack_summary;
 
 USE slack_summary;
 
+-- todo created_datetime -> created_at
+-- todo updated_at もいる
+
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT,
   slack_id VARCHAR(32) NOT NULL,
