@@ -56,3 +56,39 @@ get '/auth/:provider/callback' do
          <h1>#{params[:provider]}</h1>
          <pre>#{JSON.pretty_generate(result)}</pre>"
 end
+
+# todo
+get '/users' do
+end
+
+# todo
+get '/users/:id' do
+end
+
+# todo
+get '/channels' do
+end
+
+# todo
+get '/channels/:id' do
+end
+
+# todo
+get '/articles' do
+end
+
+# todo
+get '/articles/:id' do
+end
+
+# todo
+post '/articles' do
+end
+
+# todo
+put '/articles/:id' do
+end
+
+# todo
+delete '/articles/:id' do
+end
