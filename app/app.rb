@@ -41,10 +41,6 @@ after do
   ActiveRecord::Base.connection.close
 end
 
-get '/user' do
-  pp 'user'
-end
-
 get '/' do
   erb "<a href='/auth/slack'>Login with Slack</a><br>"
 end
