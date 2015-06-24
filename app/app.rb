@@ -9,6 +9,9 @@ require 'yaml'
 require 'omniauth'
 require 'omniauth-slack'
 require 'pp'
+require_relative 'model/user'
+require_relative 'model/article'
+require_relative 'model/message'
 
 ActiveRecord::Base.configurations = YAML.load_file(File.join(__dir__, './db/database.yml'))
 ActiveRecord::Base.establish_connection(settings.environment)
@@ -79,6 +82,11 @@ end
 
 # todo
 post '/articles' do
+  user = User.new
+  user.slack_id = 'ABCDEF'
+  user.name = 'hogehoge'
+
+  user.save
 end
 
 # todo
