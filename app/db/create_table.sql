@@ -4,7 +4,7 @@ USE slack_summary;
 
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT,
-  slack_id VARCHAR(12) NOT NULL,
+  slack_user_id VARCHAR(12) NOT NULL,
   name VARCHAR(21),
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   created_at DATETIME,
@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS articles (
   id INT AUTO_INCREMENT,
   user_id INT,
-  team_id VARCHAR(12),
-  channel_id VARCHAR(12),
+  slack_team_id VARCHAR(12),
+  slack_channel_id VARCHAR(12),
   title VARCHAR(128),
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   created_at DATETIME,
@@ -24,8 +24,9 @@ CREATE TABLE IF NOT EXISTS articles (
 
 CREATE TABLE IF NOT EXISTS messages (
   id INT AUTO_INCREMENT,
-  team_id VARCHAR(12),
-  channel_id VARCHAR(12),
+  user_id INT,
+  slack_team_id VARCHAR(12),
+  slack_channel_id VARCHAR(12),
   ts CHAR(17),
   text VARCHAR(5000),
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
