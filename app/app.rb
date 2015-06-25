@@ -24,6 +24,8 @@ configure :production, :development do
   set :sessions, true
   set :inline_templates, true # todo あとで消す
 
+  set :root_url, config['root_url']
+
   # todo あとでこのへんskimiiを参考に修正する
   use Rack::Session::Cookie,
       :key          => 'rack.session',
@@ -44,16 +46,13 @@ after do
   ActiveRecord::Base.connection.close
 end
 
-get '/' do
-  erb "<a href='/auth/slack'>Login with Slack</a><br>"
-end
-
-
 get '/auth/:provider/callback' do
   result = request.env['omniauth.auth']
-  erb "<a href='/'>Top</a><br>
-         <h1>#{params[:provider]}</h1>
-         <pre>#{JSON.pretty_generate(result)}</pre>"
+  # erb "<a href='/'>Top</a><br>
+  #        <h1>#{params[:provider]}</h1>
+  #        <pre>#{JSON.pretty_generate(result)}</pre>"
+
+  redirect(settings.root_url)
 end
 
 # todo
@@ -82,11 +81,6 @@ end
 
 # todo
 post '/articles' do
-  user = User.new
-  user.slack_id = 'ABCDEF'
-  user.name = 'hogehoge'
-
-  user.save
 end
 
 # todo
