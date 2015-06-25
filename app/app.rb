@@ -29,7 +29,8 @@ configure :production, :development do
   # todo あとでこのへんskimiiを参考に修正する
   use Rack::Session::Cookie,
       :key          => 'rack.session',
-      :expire_after => 60 * 60 * 24 * 30 # 30days
+      :expire_after => 60 * 60 * 24 * 30, # 30days
+      :secret       => config['session_secret']
 
   set :protection, :except => [:json_csrf]
 end
@@ -39,6 +40,8 @@ configure :development do
 end
 
 use OmniAuth::Builder do
+  # todo 権限レベル設定できるかな？
+  # todo なんかwarningでてる
   provider :slack, settings.client_id, settings.client_secret, scope: 'client'
 end
 
@@ -47,10 +50,19 @@ after do
 end
 
 get '/auth/:provider/callback' do
-  result = request.env['omniauth.auth']
-  # erb "<a href='/'>Top</a><br>
-  #        <h1>#{params[:provider]}</h1>
-  #        <pre>#{JSON.pretty_generate(result)}</pre>"
+  auth_res = request.env['omniauth.auth']
+
+  user = User.where(:slack_user_id => auth_res[:uid]).first
+
+  unless user
+    user = User.new
+    user.slack_user_id = auth_res[:uid]
+    user.name = auth_res[:info][:user]
+    user.save # todo saveに失敗した場合
+  end
+
+  session[:token] = auth_res[:credentials][:token]
+  session[:user_id] = user.id
 
   redirect(settings.root_url)
 end

@@ -1,4 +1,6 @@
 client_id: xxxxxxxxxxxxxxxxxxxxx
 client_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
+session_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
 root_url: http://localhost:3333/
