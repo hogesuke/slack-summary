@@ -1,4 +1,6 @@
 client_id: "6659262563.6659327047"
 client_secret: "0d23e6656df2120b2bd817096461a85e"
 
+session_secret: 0tueoqgh49qhaeondjzfoe30qtr043
+
 root_url: http://localhost:3333/
