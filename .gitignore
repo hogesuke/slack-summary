@@ -120,7 +120,7 @@ node_modules
 www/bower_components
 
 # db
-db/database.yml
+app/db/database.yml
 
 # config
-config/config.yml
+app/config/config.yml
