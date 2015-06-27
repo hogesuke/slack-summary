@@ -77,6 +77,30 @@ end
 
 # todo
 get '/channels' do
+  uri = URI.parse('http://slack.com/api/channnels.list?token=' + session[:token])
+
+  # todo beginはなくしたいね
+  begin
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      http.open_timeout = 5
+      http.read_timeout = 10
+      http.get(uri.request_uri)
+    end
+
+    case res
+      when Net::HTTPSuccess
+        # channnels = JSON.parse(res.body)
+      else
+        status(res.code)
+        # todo エラーメッセージの詰め方ももう少しうまくやりたい。かならずrescueでreturnするとか。
+        return {err_msg: 'channelsの取得に失敗しました'}.to_json
+    end
+  rescue => e
+    status('400')
+    return {err_msg: 'channelsの取得に失敗しました'}.to_json
+  end
+
+  return res.body
 end
 
 # todo
