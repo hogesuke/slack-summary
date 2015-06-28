@@ -77,7 +77,7 @@ end
 
 # todo
 get '/channels' do
-  uri = URI.parse('http://slack.com/api/channnels.list?token=' + session[:token])
+  uri = URI.parse('https://slack.com/api/channels.list?token=' + session[:token])
 
   # todo beginはなくしたいね
   begin
