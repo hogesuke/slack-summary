@@ -19,14 +19,17 @@ ActiveRecord::Base.establish_connection(settings.environment)
 configure :production, :development do
   config = YAML.load_file(File.join(__dir__, './config/config.yml'))
 
+  # todo エラーテスト用 あとで消す
+  # set :environment, :production
+
   set :client_id, config['client_id']
   set :client_secret, config['client_secret']
   set :sessions, true
   set :inline_templates, true # todo あとで消す
 
-  set :root_url, config['root_url']
+  set :root, config['root']
+  set :slack_root, config['slack_root']
 
-  # todo あとでこのへんskimiiを参考に修正する
   use Rack::Session::Cookie,
       :key          => 'rack.session',
       :expire_after => 60 * 60 * 24 * 30, # 30days
@@ -49,6 +52,10 @@ after do
   ActiveRecord::Base.connection.close
 end
 
+error do
+  { err_msg: env['sinatra.error'].message }.to_json
+end
+
 get '/auth/:provider/callback' do
   auth_res = request.env['omniauth.auth']
 
@@ -64,7 +71,7 @@ get '/auth/:provider/callback' do
   session[:token] = auth_res[:credentials][:token]
   session[:user_id] = user.id
 
-  redirect(settings.root_url)
+  redirect(settings.root)
 end
 
 # todo
@@ -77,30 +84,25 @@ end
 
 # todo
 get '/channels' do
-  uri = URI.parse('https://slack.com/api/channels.list?token=' + session[:token])
+  uri = URI.parse(settings.slack_root + 'channels.list?token=' + session[:token])
 
-  # todo beginはなくしたいね
   begin
     res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       http.open_timeout = 5
       http.read_timeout = 10
       http.get(uri.request_uri)
     end
-
-    case res
-      when Net::HTTPSuccess
-        # channnels = JSON.parse(res.body)
-      else
-        status(res.code)
-        # todo エラーメッセージの詰め方ももう少しうまくやりたい。かならずrescueでreturnするとか。
-        return {err_msg: 'channelsの取得に失敗しました'}.to_json
-    end
-  rescue => e
-    status('400')
-    return {err_msg: 'channelsの取得に失敗しました'}.to_json
+  rescue
+    status(400)
+    raise('channelsの取得に失敗しました')
   end
 
-  return res.body
+  unless res.is_a?(Net::HTTPSuccess)
+    status(res.code)
+    fail('channelsの取得に失敗しました')
+  end
+
+  res.body
 end
 
 # todo

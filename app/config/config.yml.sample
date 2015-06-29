@@ -3,4 +3,6 @@ client_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 session_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-root_url: http://localhost:3333/
+root: http://localhost:3333/
+
+slack_root: https://slack.com/api/
