@@ -76,6 +76,25 @@ end
 
 # todo
 get '/users' do
+  uri = URI.parse(settings.slack_root + 'users.list?token=' + session[:token])
+
+  begin
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      http.open_timeout = 5
+      http.read_timeout = 10
+      http.get(uri.request_uri)
+    end
+  rescue
+    status(400)
+    raise('usersの取得に失敗しました')
+  end
+
+  unless res.is_a?(Net::HTTPSuccess)
+    status(res.code)
+    fail('usersの取得に失敗しました')
+  end
+
+  res.body
 end
 
 # todo
