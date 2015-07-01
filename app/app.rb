@@ -76,25 +76,7 @@ end
 
 # todo
 get '/users' do
-  uri = URI.parse(settings.slack_root + 'users.list?token=' + session[:token])
-
-  begin
-    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
-      http.open_timeout = 5
-      http.read_timeout = 10
-      http.get(uri.request_uri)
-    end
-  rescue
-    status(400)
-    raise('usersの取得に失敗しました')
-  end
-
-  unless res.is_a?(Net::HTTPSuccess)
-    status(res.code)
-    fail('usersの取得に失敗しました')
-  end
-
-  res.body
+  fetch_slack_api('users.list')
 end
 
 # todo
@@ -103,25 +85,7 @@ end
 
 # todo
 get '/channels' do
-  uri = URI.parse(settings.slack_root + 'channels.list?token=' + session[:token])
-
-  begin
-    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
-      http.open_timeout = 5
-      http.read_timeout = 10
-      http.get(uri.request_uri)
-    end
-  rescue
-    status(400)
-    raise('channelsの取得に失敗しました')
-  end
-
-  unless res.is_a?(Net::HTTPSuccess)
-    status(res.code)
-    fail('channelsの取得に失敗しました')
-  end
-
-  res.body
+ fetch_slack_api('channels.list')
 end
 
 # todo
@@ -146,4 +110,31 @@ end
 
 # todo
 delete '/articles/:id' do
+end
+
+def fetch_slack_api(method, query: '')
+
+  if not query.nil? and not query.start_with?('&')
+    query = '&' + query
+  end
+
+  uri = URI.parse(settings.slack_root + method + '?token=' + session[:token] + query)
+
+  begin
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      http.open_timeout = 5
+      http.read_timeout = 10
+      http.get(uri.request_uri)
+    end
+  rescue
+    status(400)
+    raise("#{method}の取得に失敗しました")
+  end
+
+  unless res.is_a?(Net::HTTPSuccess)
+    status(res.code)
+    fail("#{method}の取得に失敗しました")
+  end
+
+  res.body
 end
