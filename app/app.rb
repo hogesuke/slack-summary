@@ -90,6 +90,8 @@ end
 
 # todo
 get '/channels/:id' do
+  # todo ペジネーション必要だね…
+  fetch_slack_api('channels.history', "channel=#{params['id']}")
 end
 
 # todo
@@ -112,7 +114,7 @@ end
 delete '/articles/:id' do
 end
 
-def fetch_slack_api(method, query: '')
+def fetch_slack_api(method, query = '')
 
   if not query.nil? and not query.start_with?('&')
     query = '&' + query
