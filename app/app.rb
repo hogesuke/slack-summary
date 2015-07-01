@@ -74,7 +74,7 @@ get '/auth/:provider/callback' do
   redirect(settings.root)
 end
 
-# todo
+# todo このエンドポイントいるっけ？
 get '/users' do
   fetch_slack_api('users.list')
 end
@@ -90,8 +90,27 @@ end
 
 # todo
 get '/channels/:id' do
-  # todo ペジネーション必要だね…
-  fetch_slack_api('channels.history', "channel=#{params['id']}")
+
+  users = JSON.parse(fetch_slack_api('users.list'))['members']
+
+  # todo ペジネーション必要
+  history = JSON.parse(fetch_slack_api('channels.history', "channel=#{params['id']}"))
+
+  messages = history['messages']
+
+  messages.each do |m|
+    user_id = m['user']
+
+    user = users.find do |u|
+      u['id'] == user_id
+    end
+
+    if user
+      m['user'] = { 'id' => user['id'], 'name' => user['name'] }
+    end
+  end
+
+  messages.to_json
 end
 
 # todo
