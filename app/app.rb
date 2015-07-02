@@ -48,6 +48,14 @@ use OmniAuth::Builder do
   provider :slack, settings.client_id, settings.client_secret, scope: 'client'
 end
 
+before %r{^/(?!auth).*$} do
+  headers({'Content-Type' => 'application/json'})
+
+  if session[:user_id]
+    @user = User.find(session[:user_id])
+  end
+end
+
 after do
   ActiveRecord::Base.connection.close
 end
@@ -68,8 +76,9 @@ get '/auth/:provider/callback' do
     user.save # todo saveに失敗した場合
   end
 
-  session[:token] = auth_res[:credentials][:token]
+  session[:token]   = auth_res[:credentials][:token]
   session[:user_id] = user.id
+  session[:team_id] = auth_res[:info][:team_id]
 
   redirect(settings.root)
 end
@@ -115,10 +124,14 @@ end
 
 # todo
 get '/articles' do
+  # todo ページネーション
+  Article.where(:slack_channel_id => session[:team_id]).to_json
 end
 
 # todo
 get '/articles/:id' do
+  # todo ページネーション
+  Article.where(:slack_channel_id => session[:team_id], :id => params['id']).to_json
 end
 
 # todo
