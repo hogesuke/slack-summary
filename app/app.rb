@@ -76,7 +76,7 @@ end
 
 # todo このエンドポイントいるっけ？
 get '/users' do
-  fetch_slack_api('users.list')
+  fetch_slack_api('users.list').to_json
 end
 
 # todo
@@ -85,16 +85,16 @@ end
 
 # todo
 get '/channels' do
- fetch_slack_api('channels.list')
+ fetch_slack_api('channels.list').to_json
 end
 
 # todo
 get '/channels/:id' do
 
-  users = JSON.parse(fetch_slack_api('users.list'))['members']
+  users = fetch_slack_api('users.list')['members']
 
   # todo ペジネーション必要
-  history = JSON.parse(fetch_slack_api('channels.history', "channel=#{params['id']}"))
+  history = fetch_slack_api('channels.history', "channel=#{params['id']}")
 
   messages = history['messages']
 
@@ -106,7 +106,7 @@ get '/channels/:id' do
     end
 
     if user
-      m['user'] = { 'id' => user['id'], 'name' => user['name'] }
+      m['user'] = { :id => user['id'], :name => user['name'] }
     end
   end
 
@@ -157,5 +157,5 @@ def fetch_slack_api(method, query = '')
     fail("#{method}の取得に失敗しました")
   end
 
-  res.body
+  JSON.parse(res.body)
 end
