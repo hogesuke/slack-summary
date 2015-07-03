@@ -90,6 +90,7 @@ end
 
 # todo
 get '/users/:id' do
+  User.where(:id => params['id'], :slack_channel_id => session[:team_id]).to_json
 end
 
 # todo
