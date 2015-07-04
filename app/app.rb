@@ -89,8 +89,8 @@ get '/users' do
 end
 
 # todo
-get '/users/:id' do
-  User.where(:id => params['id'], :slack_channel_id => session[:team_id]).to_json
+get '/users/:slack_user_id' do
+  fetch_slack_api('users.info', "user=#{params['slack_user_id']}").to_json
 end
 
 # todo
